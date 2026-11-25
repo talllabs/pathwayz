@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pathwayz Social Posts</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: post list rail on the left, live post player on the right; stacks on phones. Single light look to match the posts. */
+:root{
+  --blue:#21709F; --green:#1F9A3C; --green-light:#DDF0E0; --deep:#13303F; --ink:#2E4652; --paper:#F5F3EE; --ground:#E7E4DC;
+  --display:Archivo,"Helvetica Neue",Arial,sans-serif; --body:"IBM Plex Sans",Arial,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 40px}
+.wrap{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+header{display:flex;flex-direction:column;gap:6px;border-bottom:1px solid var(--deep);padding-bottom:16px}
+.kicker{font:500 12px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--blue);padding-left:10px;border-left:3px solid var(--green)}
+h1{margin:6px 0 0;font:800 clamp(26px,4vw,36px)/1.05 var(--display);color:var(--deep);letter-spacing:-.02em;text-wrap:balance}
+header p{margin:0;max-width:62ch;line-height:1.5}
+.main{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:24px;align-items:start}
+ol{list-style:none;margin:0;padding:0;border-top:1px solid var(--deep);max-height:640px;overflow:auto}
+li a{display:flex;gap:12px;align-items:baseline;padding:10px 8px;border-bottom:1px solid rgba(19,48,63,.2);color:var(--deep);text-decoration:none;font-weight:500}
+li a:hover{background:var(--paper)}
+li a:focus-visible{outline:2px solid var(--blue);outline-offset:-2px}
+li a[aria-current="true"]{background:var(--deep);color:#fff}
+li a[aria-current="true"] .n{color:#9FD3AE}
+.n{font:500 12px/1 var(--mono);color:var(--green);min-width:22px;font-variant-numeric:tabular-nums}
+.player{display:flex;flex-direction:column;gap:10px;min-width:0}
+.meta{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font:500 12px/1.4 var(--mono);color:var(--deep)}
+.meta a{color:var(--blue)}
+iframe{width:100%;max-width:620px;aspect-ratio:600/660;border:0;background:var(--ground);display:block}
+@media (max-width:760px){.main{grid-template-columns:minmax(0,1fr)} ol{max-height:260px}}
+</style>
+</head><body>
+
+<div class="wrap">
+  <header>
+    <span class="kicker">The Pathwayz Group · LinkedIn</span>
+    <h1>Animated social posts</h1>
+    <p>19 square posts in the Culture Map style. Pick one to play it. Each post loops on its own, and the Replay button under it starts it over.</p>
+  </header>
+  <div class="main">
+    <ol id="list"></ol>
+    <div class="player">
+      <div class="meta"><span id="now"></span><a id="open" href="#" target="_blank" rel="noopener">Open on its own ↗</a></div>
+      <iframe id="frame" title="Selected social post"></iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+const posts=[
+ [1,"The Culture Map (original)"],[2,"Actions Back Up Words"],[3,"After The Workshop"],[4,"5 Ways To Develop People"],
+ [5,"More Influence In HR"],[6,"Candidates Are Learning"],[7,"Explain A DDoS Attack"],[8,"A Fair Shot"],
+ [9,"How Direct Should Feedback Be"],[10,"Different Feedback Expectations"],[11,"Adapting Across Cultures"],
+ [12,"Does Your Team Have Bugs"],[13,"Better Code Review Question"],[14,"When Plans Change"],
+ [15,"Measuring Leadership Development"],[16,"Leaders On A Tight Budget"],[17,"A Chance To Lead"],
+ [18,"Becoming AI-Ready"],[19,"Workshop To Team Conversation"]];
+const list=document.getElementById('list'),frame=document.getElementById('frame'),now=document.getElementById('now'),open=document.getElementById('open');
+list.innerHTML=posts.map(([n,t])=>`<li><a href="#post-${n}" data-n="${n}"><span class="n">${String(n).padStart(2,'0')}</span><span>${t}</span></a></li>`).join('');
+function show(){
+  const m=/^#post-(\d+)$/.exec(location.hash); const n=m&&posts.some(p=>p[0]==m[1])?Number(m[1]):2;
+  const file=`social-${n}.html`;
+  if(frame.getAttribute('src')!==file) frame.setAttribute('src',file);
+  open.href=file; now.textContent=`social-${n}.html · ${posts.find(p=>p[0]===n)[1]}`;
+  list.querySelectorAll('a').forEach(a=>a.setAttribute('aria-current',a.dataset.n==n?'true':'false'));
+}
+addEventListener('hashchange',show); show();
+</script>
+</body></html>
